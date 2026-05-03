@@ -8,6 +8,7 @@ type LogoProps = {
   href?: string;
   inverted?: boolean;
   onClick?: () => void;
+  className?: string;
 };
 
 const classNames = (...values: Array<string | undefined | false>) =>
@@ -19,12 +20,16 @@ export function Logo({
   href = "#home",
   inverted = false,
   onClick,
+  className,
 }: LogoProps) {
   return (
     <Link
       href={href}
       onClick={() => onClick?.()}
-      className="relative z-[60] inline-flex max-w-full">
+      className={classNames(
+        "relative z-60 inline-flex max-w-full",
+        className,
+      )}>
       <div
         className={classNames(
           "min-w-0 flex items-center gap-1 select-none pointer-events-none",
