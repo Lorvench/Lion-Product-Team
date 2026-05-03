@@ -1,36 +1,125 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LHP Website v0
 
-## Getting Started
+This is the Lion Hospitality Partners website project.
 
-First, run the development server:
+It uses:
+
+- Next.js (frontend website)
+- Sanity (content management)
+
+## 1. How To Run The Project Locally
+
+### Step 1: Install packages
+
+```bash
+npm install
+```
+
+### Step 2: Add environment variables
+
+Create a `.env.local` file in the project root.
+
+Copy from `.env.local.example` and fill in real values:
+
+```env
+NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
+NEXT_PUBLIC_SANITY_DATASET=production
+SANITY_API_TOKEN=your_api_token
+```
+
+### Step 3: Start the website
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open this in your browser:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+### Step 4: Start Sanity Studio
 
-To learn more about Next.js, take a look at the following resources:
+This project uses Sanity inside the same app config.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+If you already have a Studio route in the app, open:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- http://localhost:3000/studio
 
-## Deploy on Vercel
+If `/studio` is not available yet, add a Studio route first (or run Studio separately using Sanity CLI).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 2. How To Edit Content In Sanity
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Open Sanity Studio.
+2. In the left menu, choose the content type you want:
+   - Site Settings
+   - Page
+   - Property
+   - Service
+   - Inquiry Type
+   - FAQ
+3. Click a document to edit.
+4. Change the fields.
+5. Click `Publish`.
+
+Your website will use the new content after publish (depending on how that page is connected to Sanity).
+
+## 3. How To Add Or Edit A Property
+
+1. Open Sanity Studio.
+2. Click `Property` in the left menu.
+3. Click `Create new`.
+4. Fill in the fields:
+   - Name
+   - Slug
+   - Location
+   - Description
+   - Image
+5. Click `Publish`.
+
+To edit an existing property:
+
+1. Open `Property`.
+2. Click the property you want.
+3. Update fields.
+4. Click `Publish`.
+
+## 4. How To Update Contact Info
+
+Contact details are in `Site Settings`.
+
+1. Open Sanity Studio.
+2. Click `Site Settings`.
+3. Update fields like:
+   - Email
+   - Phone
+   - Address
+   - Social links
+4. Click `Publish`.
+
+## 5. Useful Commands
+
+```bash
+npm run dev    # run local dev server
+npm run build  # build production version
+npm run start  # run production build locally
+npm run lint   # run lint checks
+```
+
+## 6. Known Limitations (Current v0)
+
+- Some website sections may still use local placeholder/static content.
+- Not every page/section may be fully connected to Sanity yet.
+- No user authentication/admin roles in the website app yet.
+- No final production deployment guide in this file yet.
+- Placeholder images/content may still exist in some records.
+
+## 7. Simple Troubleshooting
+
+- If Sanity content does not load:
+  - Check `.env.local` values.
+  - Restart the dev server after editing `.env.local`.
+- If `Publish` fails:
+  - Make sure required fields are filled.
+- If Studio is blank:
+  - Confirm `NEXT_PUBLIC_SANITY_PROJECT_ID` and `NEXT_PUBLIC_SANITY_DATASET` are correct.

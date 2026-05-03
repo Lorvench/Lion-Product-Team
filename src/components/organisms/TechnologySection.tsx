@@ -27,8 +27,8 @@ export function TechnologySection({ technology }: TechnologySectionProps) {
       id="technology"
       className="relative scroll-mt-24 overflow-hidden bg-deep-night py-24 text-warm-ivory md:scroll-mt-28 md:py-32 xl:py-40">
       <div className="pointer-events-none absolute inset-0 opacity-5">
-        <div className="absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 animate-[spin_60s_linear_infinite] rounded-full border border-white sm:h-[680px] sm:w-[680px] xl:h-[800px] xl:w-[800px]" />
-        <div className="absolute left-1/2 top-1/2 h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 animate-[spin_40s_linear_infinite_reverse] rounded-full border border-lion-gold sm:h-[520px] sm:w-[520px] xl:h-[600px] xl:w-[600px]" />
+        <div className="absolute left-1/2 top-1/2 h-130 w-130 -translate-x-1/2 -translate-y-1/2 animate-[spin_60s_linear_infinite] rounded-full border border-white sm:h-170 sm:w-170 xl:h-200 xl:w-200" />
+        <div className="absolute left-1/2 top-1/2 h-90 w-90 -translate-x-1/2 -translate-y-1/2 animate-[spin_40s_linear_infinite_reverse] rounded-full border border-lion-gold sm:h-130 sm:w-130 xl:h-150 xl:w-150" />
       </div>
 
       <Container className="relative z-10">

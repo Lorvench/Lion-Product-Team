@@ -26,10 +26,7 @@ export function Logo({
     <Link
       href={href}
       onClick={() => onClick?.()}
-      className={classNames(
-        "relative z-60 inline-flex max-w-full",
-        className,
-      )}>
+      className={classNames("relative z-60 inline-flex max-w-full", className)}>
       <div
         className={classNames(
           "min-w-0 flex items-center gap-1 select-none pointer-events-none",
