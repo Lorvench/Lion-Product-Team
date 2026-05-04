@@ -1,4 +1,3 @@
-import { homeData } from "@/data/home";
 import { ClosingCtaSection } from "@/components/organisms/ClosingCtaSection";
 import { GroupStorySection } from "@/components/organisms/GroupStorySection";
 import { Header } from "@/components/organisms/Header";
@@ -9,22 +8,36 @@ import { MarketThesisSection } from "@/components/organisms/MarketThesisSection"
 import { PortfolioSection } from "@/components/organisms/PortfolioSection";
 import { SiteFooter } from "@/components/organisms/SiteFooter";
 import { TechnologySection } from "@/components/organisms/TechnologySection";
+import { getSiteContent } from "@/lib/site-content";
 
-export default function Home() {
+export default async function Home() {
+  const {
+    siteBrand,
+    siteNavigation,
+    siteVenueLinks,
+    siteGroupLinks,
+    siteHeaderExtras,
+    siteFooter,
+    homeData,
+  } = await getSiteContent();
+
   return (
     <div className="flex min-h-screen flex-col bg-warm-ivory text-deep-night">
       <Header
-        brand={homeData.brand}
-        navigation={homeData.navigation}
-        menuCta={homeData.header.cta}
-        venueLinks={homeData.portfolio.items}
-        groupTitle={homeData.header.groupTitle}
-        groupLinks={homeData.groupLinks}
-        overlayCrmHeading={homeData.header.overlayCrmHeading}
-        overlayCrmAction={homeData.header.overlayCrmAction}
-        contact={homeData.footer.contact}
-        footerLinks={homeData.footer.bottomLinks}
-        copyright={homeData.footer.copyright}
+        brand={siteBrand}
+        navigation={siteNavigation}
+        menuCta={siteHeaderExtras.menuCta}
+        venueLinks={siteVenueLinks}
+        groupTitle={siteHeaderExtras.groupTitle}
+        groupLinks={siteGroupLinks}
+        overlayMainDirLabel={siteHeaderExtras.overlayMainDirLabel}
+        overlayVenuesLabel={siteHeaderExtras.overlayVenuesLabel}
+        overlayCrmHeading={siteHeaderExtras.overlayCrmHeading}
+        overlayCrmAction={siteHeaderExtras.overlayCrmAction}
+        contact={siteHeaderExtras.contact}
+        footerLinks={siteHeaderExtras.footerLinks}
+        copyright={siteHeaderExtras.copyright}
+        darkHero
       />
 
       <main className="flex-1 bg-warm-ivory">
@@ -39,11 +52,11 @@ export default function Home() {
       </main>
 
       <SiteFooter
-        brand={homeData.brand}
-        navigation={homeData.navigation}
-        venueLinks={homeData.portfolio.items}
-        groupLinks={homeData.groupLinks}
-        footer={homeData.footer}
+        brand={siteBrand}
+        navigation={siteNavigation}
+        venueLinks={siteVenueLinks}
+        groupLinks={siteGroupLinks}
+        footer={siteFooter}
       />
     </div>
   );

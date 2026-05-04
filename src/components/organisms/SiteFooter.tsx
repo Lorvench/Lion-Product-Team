@@ -35,10 +35,23 @@ type SiteFooterProps = {
     crmEmailPlaceholder: string;
     directoriesTitle: string;
     portfolioTitle: string;
-    bottomLinks: string[];
+    socialLinks: Array<{
+      platform: string;
+      href: string;
+    }>;
+    bottomLinks: Array<{
+      label: string;
+      href: string;
+    }>;
     copyright: string;
   };
 };
+
+const socialIconMap = {
+  instagram: InstagramIcon,
+  twitter: TwitterIcon,
+  linkedin: LinkedInIcon,
+} as const;
 
 export function SiteFooter({
   brand,
@@ -60,7 +73,7 @@ export function SiteFooter({
               leftLabel={brand.leftLabel}
               rightLabel={brand.rightLabel}
               inverted
-              href="#home"
+              href="/"
               className="mb-8 md:mb-10"
             />
             <p className="mb-10 font-display text-3xl leading-tight tracking-tighter sm:text-4xl md:text-5xl md:leading-[1.1] max-w-sm">
@@ -69,24 +82,27 @@ export function SiteFooter({
 
             {/* Social icons */}
             <div className="mb-12 flex gap-5 md:gap-6 md:mb-14">
-              <a
-                href="#"
-                aria-label="Instagram"
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 transition-all hover:border-lion-gold hover:text-lion-gold">
-                <InstagramIcon className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                aria-label="Twitter"
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 transition-all hover:border-lion-gold hover:text-lion-gold">
-                <TwitterIcon className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                aria-label="LinkedIn"
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 transition-all hover:border-lion-gold hover:text-lion-gold">
-                <LinkedInIcon className="h-5 w-5" />
-              </a>
+              {footer.socialLinks.map((linkItem, index) => {
+                const platform = linkItem.platform.toLowerCase();
+                const Icon =
+                  socialIconMap[platform as keyof typeof socialIconMap];
+
+                return (
+                  <a
+                    key={`social-link-${index}`}
+                    href={linkItem.href}
+                    aria-label={linkItem.platform}
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 transition-all hover:border-lion-gold hover:text-lion-gold">
+                    {Icon ? (
+                      <Icon className="h-5 w-5" />
+                    ) : (
+                      <span className="text-xs font-black uppercase">
+                        {linkItem.platform.slice(0, 1)}
+                      </span>
+                    )}
+                  </a>
+                );
+              })}
             </div>
 
             {/* LION CRM card */}
@@ -167,12 +183,12 @@ export function SiteFooter({
             {footer.copyright}
           </p>
           <div className="flex flex-wrap gap-x-6 gap-y-2">
-            {footer.bottomLinks.map((linkLabel, index) => (
+            {footer.bottomLinks.map((linkItem, index) => (
               <Link
                 key={`footer-bottom-${index}`}
-                href="#"
+                href={linkItem.href}
                 className="text-[10px] font-black uppercase tracking-widest text-lion-gold/40 transition-all hover:text-lion-gold">
-                {linkLabel}
+                {linkItem.label}
               </Link>
             ))}
           </div>

@@ -17,7 +17,7 @@ const classNames = (...values: Array<string | undefined | false>) =>
 export function Logo({
   leftLabel,
   rightLabel,
-  href = "#home",
+  href = "/",
   inverted = false,
   onClick,
   className,

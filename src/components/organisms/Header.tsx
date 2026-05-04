@@ -27,6 +27,8 @@ type HeaderProps = {
     href: string;
     label: string;
   }>;
+  overlayMainDirLabel: string;
+  overlayVenuesLabel: string;
   overlayCrmHeading: string;
   overlayCrmAction: string;
   contact: {
@@ -34,8 +36,13 @@ type HeaderProps = {
     primary: string;
     secondary: string;
   };
-  footerLinks: string[];
+  footerLinks: Array<{
+    label: string;
+    href: string;
+  }>;
   copyright: string;
+  /** Pass true only on pages whose hero has a dark background (home). */
+  darkHero?: boolean;
 };
 
 const classNames = (...values: Array<string | undefined | false>) =>
@@ -48,11 +55,14 @@ export function Header({
   venueLinks,
   groupTitle,
   groupLinks,
+  overlayMainDirLabel,
+  overlayVenuesLabel,
   overlayCrmHeading,
   overlayCrmAction,
   contact,
   footerLinks,
   copyright,
+  darkHero = false,
 }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isAtTop, setIsAtTop] = useState(true);
@@ -100,8 +110,9 @@ export function Header({
 
   const toggleMenu = () => setIsOpen((current) => !current);
   const closeMenu = () => setIsOpen(false);
-  // Header bar chrome: transparent at top (light mode), scrolled = warm-ivory (dark mode), open overlay = warm-ivory (dark mode)
-  const usesLightChrome = !isOpen && isAtTop;
+  // Header bar chrome: transparent at top on dark-hero pages (inverted/white text),
+  // otherwise always uses dark text regardless of scroll position.
+  const usesLightChrome = darkHero && !isOpen && isAtTop;
 
   return (
     <>
@@ -184,7 +195,7 @@ export function Header({
             {/* Col 1: Main Directory */}
             <div className="space-y-2">
               <span className="mb-8 block text-[10px] font-black uppercase tracking-[0.3em] text-lion-gold opacity-60 md:mb-10">
-                MAIN DIRECTORY
+                {overlayMainDirLabel}
               </span>
               <nav className="space-y-2">
                 {navigation.map((item) => (
@@ -211,7 +222,7 @@ export function Header({
             {/* Col 2: Venues Portfolio */}
             <div>
               <span className="mb-8 block text-[10px] font-black uppercase tracking-[0.3em] text-lion-gold opacity-60 md:mb-10">
-                VENUES PORTFOLIO
+                {overlayVenuesLabel}
               </span>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
                 {venueLinks.map((item, index) => (
@@ -243,6 +254,18 @@ export function Header({
                 ))}
               </ul>
 
+              <div className="mb-8 rounded-3xl border border-deep-night/10 bg-white/40 p-6">
+                <span className="mb-3 block text-[10px] font-black uppercase tracking-[0.3em] text-lion-gold opacity-60">
+                  {contact.eyebrow}
+                </span>
+                <p className="font-display text-xl text-deep-night">
+                  {contact.primary}
+                </p>
+                <p className="mt-3 text-[10px] font-black uppercase tracking-widest text-deep-night/40">
+                  {contact.secondary}
+                </p>
+              </div>
+
               {/* CRM card */}
               <div className="mt-auto rounded-3xl bg-deep-night p-6 text-warm-ivory sm:p-8">
                 <h4 className="mb-5 font-display text-xl">
@@ -265,13 +288,13 @@ export function Header({
               {copyright}
             </div>
             <div className="flex flex-wrap gap-x-6 gap-y-3 md:justify-end">
-              {footerLinks.map((linkLabel, index) => (
+              {footerLinks.map((linkItem, index) => (
                 <a
                   key={`footer-link-${index}`}
-                  href="#footer"
+                  href={linkItem.href}
                   onClick={closeMenu}
                   className="text-[10px] font-black uppercase tracking-widest opacity-40 transition-opacity hover:opacity-100">
-                  {linkLabel}
+                  {linkItem.label}
                 </a>
               ))}
             </div>
