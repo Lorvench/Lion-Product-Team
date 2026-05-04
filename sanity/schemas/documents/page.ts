@@ -1,4 +1,5 @@
-import { defineField, defineType } from "sanity";
+// sanity/schemas/page.ts
+import { defineType, defineField } from "sanity";
 
 export default defineType({
   name: "page",
@@ -15,19 +16,34 @@ export default defineType({
       name: "slug",
       title: "Slug",
       type: "slug",
-      options: { source: "title", maxLength: 96 },
+      options: { source: "title" },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "heading",
-      title: "Heading",
-      type: "string",
+      name: "seo",
+      title: "SEO",
+      type: "object",
+      fields: [
+        { name: "metaTitle", type: "string" },
+        { name: "metaDescription", type: "text" },
+        { name: "ogImage", type: "image" },
+      ],
     }),
     defineField({
-      name: "body",
-      title: "Body",
-      type: "text",
-      rows: 8,
+      name: "hero",
+      title: "Hero",
+      type: "object",
+      fields: [
+        { name: "title", type: "string" },
+        { name: "subtitle", type: "text" },
+        { name: "image", type: "image" },
+      ],
+    }),
+    defineField({
+      name: "sections",
+      title: "Sections",
+      type: "array",
+      of: [{ type: "block" }, { type: "image" }],
     }),
   ],
 });

@@ -1,4 +1,5 @@
-import { defineField, defineType } from "sanity";
+// sanity/schemas/service.ts
+import { defineType, defineField } from "sanity";
 
 export default defineType({
   name: "service",
@@ -12,23 +13,15 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "slug",
-      title: "Slug",
-      type: "slug",
-      options: { source: "title", maxLength: 96 },
-      validation: (Rule) => Rule.required(),
+      name: "description",
+      title: "Description",
+      type: "text",
     }),
     defineField({
-      name: "summary",
-      title: "Summary",
-      type: "text",
-      rows: 4,
-    }),
-    defineField({
-      name: "body",
-      title: "Body",
-      type: "text",
-      rows: 8,
+      name: "icon",
+      title: "Icon",
+      type: "image",
+      options: { hotspot: true },
     }),
   ],
 });

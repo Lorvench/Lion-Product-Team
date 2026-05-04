@@ -1,4 +1,5 @@
-import { defineField, defineType } from "sanity";
+// sanity/schemas/inquiryType.ts
+import { defineType, defineField } from "sanity";
 
 export default defineType({
   name: "inquiryType",
@@ -6,16 +7,21 @@ export default defineType({
   type: "document",
   fields: [
     defineField({
-      name: "title",
-      title: "Title",
+      name: "label",
+      title: "Label",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "email",
-      title: "Email",
+      name: "routingEmail",
+      title: "Routing Email",
       type: "string",
       validation: (Rule) => Rule.required().email(),
+    }),
+    defineField({
+      name: "formCategory",
+      title: "Form Category",
+      type: "string",
     }),
   ],
 });
