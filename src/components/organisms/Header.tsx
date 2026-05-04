@@ -125,7 +125,7 @@ export function Header({
               ? "border-transparent bg-transparent"
               : "border-deep-night/5 bg-warm-ivory/92 backdrop-blur-md",
         )}>
-        <Container className="flex items-center justify-between gap-6">
+        <Container className="flex items-center justify-between gap-3 sm:gap-4 lg:gap-6">
           <Logo
             leftLabel={brand.leftLabel}
             rightLabel={brand.rightLabel}
@@ -146,7 +146,7 @@ export function Header({
             ))}
           </nav>
 
-          <div className="relative z-60 flex items-center gap-6">
+          <div className="relative z-60 flex shrink-0 items-center gap-3 sm:gap-4 lg:gap-6">
             <Button
               href="#contact"
               size="sm"
@@ -163,7 +163,7 @@ export function Header({
                     ? "ghost-light"
                     : "ghost-dark"
               }
-              className="h-12 w-12 p-0! lg:hidden"
+              className="flex h-11 w-11 p-0! lg:hidden"
               onClick={toggleMenu}
               ariaLabel={
                 isOpen ? "Close navigation menu" : "Open navigation menu"
@@ -203,20 +203,11 @@ export function Header({
                     key={`overlay-${item.href}-${item.label}`}
                     href={item.href}
                     onClick={closeMenu}
-                    className="block py-2 font-display text-4xl tracking-tighter transition-colors hover:text-lion-gold sm:text-5xl">
+                    className="block py-2 font-display text-3xl leading-none tracking-tighter transition-colors hover:text-lion-gold sm:text-5xl">
                     {item.label}
                   </a>
                 ))}
               </nav>
-
-              <Button
-                href="#contact"
-                variant="gold"
-                size="sm"
-                className="mt-6 lg:hidden"
-                onClick={closeMenu}>
-                {menuCta}
-              </Button>
             </div>
 
             {/* Col 2: Venues Portfolio */}

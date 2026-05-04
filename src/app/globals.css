@@ -72,7 +72,6 @@ body {
   font-size: var(--text-sm);
   line-height: 1.6;
   max-width: 100%;
-  min-width: 320px;
   overflow-x: clip;
 }
 
@@ -100,6 +99,17 @@ img {
 
 .text-balance {
   text-wrap: balance;
+}
+
+p,
+a,
+span,
+button,
+h1,
+h2,
+h3,
+h4 {
+  overflow-wrap: anywhere;
 }
 
 /* ── Form / Input system ───────────────────────────────────────────────────── */

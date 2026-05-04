@@ -45,7 +45,7 @@ type NativeButtonProps = SharedProps &
   };
 
 const baseClassName =
-  "inline-flex items-center justify-center rounded-full font-black uppercase tracking-widest transition-all duration-300 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-lion-gold/55 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40 text-[10px]";
+  "min-w-0 max-w-full items-center justify-center rounded-full text-center font-black uppercase tracking-widest transition-all duration-300 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-lion-gold/55 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40 text-[10px]";
 
 const sizeClassNames: Record<ButtonSize, string> = {
   sm: "px-8 py-3",
@@ -69,12 +69,22 @@ const variantClassNames: Record<ButtonVariant, string> = {
 const classNames = (...values: Array<string | undefined | false>) =>
   values.filter(Boolean).join(" ");
 
+const hasDisplayOverride = (className?: string) =>
+  Boolean(
+    className
+      ?.split(/\s+/)
+      .some((token) =>
+        /(^|:)(hidden|block|inline|inline-block|flex|inline-flex)$/.test(token),
+      ),
+  );
+
 const getComputedClassName = (
   variant: ButtonVariant,
   size: ButtonSize,
   className?: string,
 ) =>
   classNames(
+    hasDisplayOverride(className) ? undefined : "inline-flex",
     baseClassName,
     sizeClassNames[size],
     variantClassNames[variant],

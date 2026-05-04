@@ -1,7 +1,20 @@
 /** Fallback placeholder data used until Sanity content is available. */
 
-const placeholder = (count = 1) =>
-  Array.from({ length: count }, () => "[PLACEHOLDER]").join(" ");
+const placeholder = (count = 1) => {
+  if (count <= 1) {
+    return "Placeholder";
+  }
+
+  if (count <= 3) {
+    return "Placeholder text";
+  }
+
+  if (count <= 8) {
+    return "Placeholder copy";
+  }
+
+  return "Placeholder body copy";
+};
 
 export const siteBrand = {
   leftLabel: placeholder(1),
