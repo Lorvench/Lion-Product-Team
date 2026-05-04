@@ -163,7 +163,7 @@ export function Header({
                     ? "ghost-light"
                     : "ghost-dark"
               }
-              className="h-12 w-12 p-0!"
+              className="h-12 w-12 p-0! lg:hidden"
               onClick={toggleMenu}
               ariaLabel={
                 isOpen ? "Close navigation menu" : "Open navigation menu"

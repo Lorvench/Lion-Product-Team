@@ -54,10 +54,8 @@ const sizeClassNames: Record<ButtonSize, string> = {
 };
 
 const variantClassNames: Record<ButtonVariant, string> = {
-  gold:
-    "bg-lion-gold text-deep-night shadow-xl shadow-lion-gold/10 hover:bg-amber-warm active:bg-lion-gold",
-  dark:
-    "bg-deep-night text-warm-ivory shadow-xl shadow-deep-night/20 hover:bg-deep-night/80 active:bg-deep-night",
+  gold: "bg-lion-gold text-deep-night shadow-xl shadow-lion-gold/10 hover:bg-amber-warm active:bg-lion-gold",
+  dark: "bg-deep-night text-warm-ivory shadow-xl shadow-deep-night/20 hover:bg-deep-night/80 active:bg-deep-night",
   "outline-light":
     "border border-warm-ivory/30 text-warm-ivory hover:bg-white/10 active:bg-white/5",
   "outline-dark":
