@@ -50,9 +50,6 @@ export function PortfolioCard({
           <h3 className="min-w-0 text-3xl tracking-tight text-deep-night transition-colors group-hover:text-lion-gold sm:text-4xl">
             {title}
           </h3>
-          <div className="text-[10px] font-black uppercase tracking-widest text-lion-gold opacity-0 transition-opacity group-hover:opacity-100">
-            {"[PLACEHOLDER]"}
-          </div>
         </div>
 
         <p className="mb-8 max-w-sm text-sm font-medium leading-7 text-deep-night/60">
