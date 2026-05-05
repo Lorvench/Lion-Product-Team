@@ -29,11 +29,11 @@ function FeatureIcon({ icon }: Pick<FeatureCardProps, "icon">) {
 
 export function FeatureCard({ icon, title, description }: FeatureCardProps) {
   return (
-    <div className="group rounded-[3rem] border border-deep-night/10 bg-white p-8 shadow-sm transition-shadow hover:shadow-xl">
+    <div className="group rounded-[2.5rem] border border-deep-night/8 bg-white p-7 shadow-[0_2px_12px_rgba(10,26,46,0.06)] transition-all hover:shadow-[0_8px_40px_rgba(10,26,46,0.10)] hover:-translate-y-0.5">
       <IconFrame className="mb-6 bg-lion-gold/10 text-lion-gold">
         <FeatureIcon icon={icon} />
       </IconFrame>
-      <h3 className="mb-4 text-2xl text-deep-night">{title}</h3>
+      <h3 className="mb-3 text-xl text-deep-night">{title}</h3>
       <p className="text-sm leading-7 text-deep-night/60">{description}</p>
     </div>
   );

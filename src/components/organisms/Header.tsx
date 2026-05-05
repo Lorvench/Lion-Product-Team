@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/atoms/Button";
 import { Container } from "@/components/atoms/Container";
@@ -64,6 +65,7 @@ export function Header({
   copyright,
   darkHero = false,
 }: HeaderProps) {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isAtTop, setIsAtTop] = useState(true);
 
@@ -112,7 +114,8 @@ export function Header({
   const closeMenu = () => setIsOpen(false);
   // Header bar chrome: transparent at top on dark-hero pages (inverted/white text),
   // otherwise always uses dark text regardless of scroll position.
-  const usesLightChrome = darkHero && !isOpen && isAtTop;
+  const usesDarkHeroChrome = darkHero || pathname === "/venues";
+  const usesLightChrome = usesDarkHeroChrome && !isOpen && isAtTop;
 
   return (
     <>

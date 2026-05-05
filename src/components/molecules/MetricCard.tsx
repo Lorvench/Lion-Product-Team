@@ -42,18 +42,18 @@ export function MetricCard({
 }: MetricCardProps) {
   return (
     <div
-      className={`group min-w-0 rounded-4xl border border-white/10 bg-white/5 p-8 transition-all sm:p-10 xl:rounded-[2.5rem] xl:p-12 ${borderClassName}`}>
+      className={`group min-w-0 rounded-4xl border border-white/10 bg-white/5 p-7 transition-all sm:p-8 xl:rounded-[2.5rem] xl:p-10 ${borderClassName}`}>
       <MetricIcon
         icon={icon}
         className={`mb-6 h-10 w-10 transition-transform group-hover:scale-110 sm:mb-8 sm:h-12 sm:w-12 ${accentClassName}`}
       />
-      <h4 className="mb-5 text-2xl text-warm-ivory sm:mb-6 sm:text-3xl">
+      <h4 className="mb-4 text-xl text-warm-ivory sm:mb-5 sm:text-2xl">
         {title}
       </h4>
       <p className="mb-8 max-w-md text-sm leading-7 text-warm-ivory/40">
         {description}
       </p>
-      <div className={`text-3xl sm:text-4xl ${accentClassName}`}>{metric}</div>
+      <div className={`text-2xl sm:text-3xl ${accentClassName}`}>{metric}</div>
       <div className="mt-2 text-[10px] font-black uppercase tracking-widest opacity-20">
         {caption}
       </div>

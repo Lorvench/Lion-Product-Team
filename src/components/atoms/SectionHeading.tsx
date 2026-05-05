@@ -39,7 +39,7 @@ export function SectionHeading({
         <Eyebrow className="mb-8 text-lion-gold">{label}</Eyebrow>
         <h2
           className={classNames(
-            "max-w-5xl text-[2.75rem] leading-[0.92] tracking-tighter text-balance sm:text-5xl md:text-6xl lg:text-7xl",
+            "max-w-4xl text-[1.95rem] leading-[0.95] tracking-tighter text-balance sm:text-4xl md:text-5xl lg:text-[3.25rem]",
             isDark ? "text-warm-ivory" : "text-deep-night",
             titleClassName,
           )}>
@@ -52,7 +52,7 @@ export function SectionHeading({
           {description ? (
             <p
               className={classNames(
-                "max-w-xl text-base font-medium leading-7 md:text-lg md:leading-8",
+                "max-w-xl text-sm font-medium leading-7 md:text-base md:leading-7",
                 isDark ? "text-warm-ivory/60" : "text-deep-night/60",
               )}>
               {description}

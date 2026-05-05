@@ -47,7 +47,7 @@ export function PortfolioCard({
         </div>
 
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="min-w-0 text-3xl tracking-tight text-deep-night transition-colors group-hover:text-lion-gold sm:text-4xl">
+          <h3 className="min-w-0 text-2xl tracking-tight text-deep-night transition-colors group-hover:text-lion-gold sm:text-3xl">
             {title}
           </h3>
         </div>

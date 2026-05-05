@@ -40,17 +40,21 @@ export function HeroSection({ hero }: HeroSectionProps) {
           {hero.label}
         </Eyebrow>
 
-        <h1 className="mx-auto mb-8 max-w-6xl text-[3.35rem] leading-[0.84] tracking-tighter text-warm-ivory text-balance sm:text-6xl md:mb-10 lg:text-8xl xl:text-[9rem]">
+        <h1 className="mx-auto mb-8 max-w-5xl text-[2.2rem] leading-[0.9] tracking-tighter text-warm-ivory text-balance sm:text-5xl md:mb-10 lg:text-6xl xl:text-7xl">
           <span className="block">{hero.titleLead}</span>
           <span className="italic opacity-40">{hero.titleAccent}</span>
         </h1>
 
-        <p className="mx-auto mb-10 max-w-2xl text-base leading-7 text-warm-ivory/80 sm:text-lg sm:leading-8 md:mb-12 md:text-2xl">
+        <p className="mx-auto mb-10 max-w-xl text-sm leading-7 text-warm-ivory/70 sm:text-base sm:leading-8 md:mb-12 md:text-lg">
           {hero.body}
         </p>
 
         <div className="flex w-full max-w-xl flex-col justify-center gap-4 sm:flex-row sm:gap-6">
-          <Button href="#portfolio" variant="gold" size="md" className="w-full sm:w-auto">
+          <Button
+            href="#portfolio"
+            variant="gold"
+            size="md"
+            className="w-full sm:w-auto">
             {hero.primaryCta}
           </Button>
           <Button

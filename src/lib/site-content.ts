@@ -61,10 +61,6 @@ const client = isConfigured
     })
   : null;
 
-// ---------------------------------------------------------------------------
-// Sanity image URL resolver — works with any version of @sanity/image-url
-// by requiring it at runtime so import errors don't break the module graph.
-// ---------------------------------------------------------------------------
 function sanityImageUrl(source: unknown): string | undefined {
   if (!source || !projectId) return undefined;
   try {
@@ -82,9 +78,6 @@ function sanityImageUrl(source: unknown): string | undefined {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
 function str(val: unknown): string | undefined {
   if (typeof val === "string" && val.trim()) return val.trim();
   return undefined;
@@ -111,6 +104,25 @@ function mapTitleLinks(
     .filter((l) => l.title !== "");
 }
 
+// Merges every non-empty string/array field from a raw Sanity object onto a fallback
+function mergeObj<T extends Record<string, unknown>>(
+  fallback: T,
+  raw: unknown,
+): T {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return fallback;
+  const src = raw as Record<string, unknown>;
+  const result = { ...fallback };
+  for (const k of Object.keys(fallback)) {
+    const v = src[k];
+    if (typeof v === "string" && v.trim()) {
+      (result as Record<string, unknown>)[k] = v.trim();
+    } else if (Array.isArray(v) && v.length > 0) {
+      (result as Record<string, unknown>)[k] = v;
+    }
+  }
+  return result;
+}
+
 const badgeClasses = [
   "bg-lion-gold text-white",
   "bg-teal-mint text-deep-night",
@@ -120,9 +132,6 @@ const badgeClasses = [
   "bg-white text-deep-night",
 ];
 
-// ---------------------------------------------------------------------------
-// Main data fetcher
-// ---------------------------------------------------------------------------
 export const getSiteContent = cache(async (): Promise<SiteContent> => {
   if (!client) {
     console.warn("⚠️  Sanity not configured — using fallback data.");
@@ -130,7 +139,16 @@ export const getSiteContent = cache(async (): Promise<SiteContent> => {
   }
 
   try {
-    const [settings, properties, services] = await Promise.all([
+    // Fetch everything in parallel — siteSettings untouched, pages are separate docs
+    const [
+      settings,
+      properties,
+      services,
+      venuesDoc,
+      capabilitiesDoc,
+      growthDoc,
+      aboutDoc,
+    ] = await Promise.all([
       client.fetch<Record<string, unknown> | null>(
         '*[_type == "siteSettings"][0]',
       ),
@@ -140,28 +158,49 @@ export const getSiteContent = cache(async (): Promise<SiteContent> => {
       client.fetch<Array<Record<string, unknown>>>(
         '*[_type == "service"]  | order(_createdAt asc)',
       ),
+      client.fetch<Record<string, unknown> | null>(
+        '*[_type == "venuesPageContent"][0]',
+      ),
+      client.fetch<Record<string, unknown> | null>(
+        '*[_type == "capabilitiesPageContent"][0]',
+      ),
+      client.fetch<Record<string, unknown> | null>(
+        '*[_type == "growthPageContent"][0]',
+      ),
+      client.fetch<Record<string, unknown> | null>(
+        '*[_type == "aboutPageContent"][0]',
+      ),
     ]);
 
-    console.log("📡 Sanity Project ID:", projectId);
-    console.log("🏢 siteSettings fields:", Object.keys(settings ?? {}));
-    console.log("🏖️  properties:", properties?.length ?? 0, "docs");
-    console.log("⚙️  services:", services?.length ?? 0, "docs");
+    console.log("📡 siteSettings fields:", Object.keys(settings ?? {}));
+    console.log("🏖️  properties:", properties?.length ?? 0);
+    console.log("⚙️  services:", services?.length ?? 0);
+    console.log(
+      "📄 page docs — venues:",
+      !!venuesDoc,
+      "caps:",
+      !!capabilitiesDoc,
+      "growth:",
+      !!growthDoc,
+      "about:",
+      !!aboutDoc,
+    );
 
     const s = settings ?? {};
 
-    // ── siteBrand ────────────────────────────────────────────────────────────
+    // ── siteBrand ─────────────────────────────────────────────────────────────
     const sb = s.siteBrand as Record<string, unknown> | undefined;
     const mergedBrand = {
       leftLabel: str(sb?.leftLabel) ?? siteBrand.leftLabel,
       rightLabel: str(sb?.rightLabel) ?? siteBrand.rightLabel,
     };
 
-    // ── navigation ───────────────────────────────────────────────────────────
+    // ── navigation ────────────────────────────────────────────────────────────
     const mergedNav = mapLinks(s.siteNavigation) ?? siteNavigation;
     const mergedVenueLinks = mapTitleLinks(s.siteVenueLinks) ?? siteVenueLinks;
     const mergedGroupLinks = mapLinks(s.siteGroupLinks) ?? siteGroupLinks;
 
-    // ── header extras ────────────────────────────────────────────────────────
+    // ── header extras ─────────────────────────────────────────────────────────
     const he = s.siteHeaderExtras as Record<string, unknown> | undefined;
     const hc = he?.contact as Record<string, unknown> | undefined;
     const mergedHeaderExtras = {
@@ -184,7 +223,7 @@ export const getSiteContent = cache(async (): Promise<SiteContent> => {
       copyright: str(he?.copyright) ?? siteHeaderExtras.copyright,
     };
 
-    // ── footer ───────────────────────────────────────────────────────────────
+    // ── footer ────────────────────────────────────────────────────────────────
     const sf = s.siteFooter as Record<string, unknown> | undefined;
     const mergedFooter = {
       tagline: str(sf?.tagline) ?? siteFooter.tagline,
@@ -208,45 +247,22 @@ export const getSiteContent = cache(async (): Promise<SiteContent> => {
       copyright: str(sf?.copyright) ?? siteFooter.copyright,
     };
 
-    // ── homeData helper ──────────────────────────────────────────────────────
+    // ── homeData ──────────────────────────────────────────────────────────────
     const hd = s.homeData as Record<string, unknown> | undefined;
+    const icons = ["chart", "building", "sparkles", "store"] as const;
 
-    function homeSection<T extends Record<string, unknown>>(
-      key: string,
-      fallback: T,
-    ): T {
-      const section = hd?.[key] as Record<string, unknown> | undefined;
-      if (!section) return fallback;
-      const result = { ...fallback };
-      for (const k of Object.keys(fallback)) {
-        const v = section[k];
-        if (typeof v === "string" && v.trim()) {
-          (result as Record<string, unknown>)[k] = v.trim();
-        } else if (Array.isArray(v) && v.length > 0) {
-          (result as Record<string, unknown>)[k] = v;
-        }
-      }
-      return result;
-    }
-
-    // ── properties → venueItems (venues page) ────────────────────────────────
-    const mergedVenueItems = properties?.length
-      ? properties.map((p, i) => {
-          const fb = venueItems[i] ?? venueItems[0];
-          const img = sanityImageUrl(arr<unknown>(p.gallery)?.[0]) ?? fb.image;
+    const homeCapCards = services?.length
+      ? services.slice(0, 4).map((sv, i) => {
+          const fb =
+            homeData.capabilities.cards[i] ?? homeData.capabilities.cards[0];
           return {
-            slug:
-              (p.slug as { current?: string } | undefined)?.current ?? fb.slug,
-            title: str(p.name) ?? fb.title,
-            category: str(p.category) ?? fb.category,
-            description: str(p.description) ?? fb.description,
-            location: str(p.location) ?? fb.location,
-            image: img,
+            icon: fb.icon ?? icons[i % 4],
+            title: str(sv.title) ?? fb.title,
+            description: str(sv.description) ?? fb.description,
           };
         })
-      : venueItems;
+      : homeData.capabilities.cards;
 
-    // ── properties → portfolio cards (home page) ─────────────────────────────
     const portfolioItems = properties?.length
       ? properties.map((p, i) => {
           const fb = homeData.portfolio.items[i] ?? homeData.portfolio.items[0];
@@ -267,35 +283,8 @@ export const getSiteContent = cache(async (): Promise<SiteContent> => {
         })
       : homeData.portfolio.items;
 
-    // ── services → capability cards ──────────────────────────────────────────
-    const icons = ["chart", "building", "sparkles", "store"] as const;
-
-    const homeCapCards = services?.length
-      ? services.slice(0, 4).map((sv, i) => {
-          const fb =
-            homeData.capabilities.cards[i] ?? homeData.capabilities.cards[0];
-          return {
-            icon: fb.icon ?? icons[i % 4],
-            title: str(sv.title) ?? fb.title,
-            description: str(sv.description) ?? fb.description,
-          };
-        })
-      : homeData.capabilities.cards;
-
-    const mergedCapabilityCards = services?.length
-      ? services.map((sv, i) => {
-          const fb = capabilityCards[i] ?? capabilityCards[0];
-          return {
-            title: str(sv.title) ?? fb.title,
-            description: str(sv.description) ?? fb.description,
-          };
-        })
-      : capabilityCards;
-
-    // ── technology cards ─────────────────────────────────────────────────────
     const techSection = hd?.technology as Record<string, unknown> | undefined;
     const sanityTechCards = arr<Record<string, unknown>>(techSection?.cards);
-
     const technologyCards = sanityTechCards
       ? sanityTechCards.map((c, i) => {
           const fb =
@@ -313,27 +302,115 @@ export const getSiteContent = cache(async (): Promise<SiteContent> => {
         })
       : homeData.technology.cards;
 
-    // ── assemble homeData ────────────────────────────────────────────────────
     const mergedHomeData = {
       ...homeData,
-      hero: homeSection("hero", homeData.hero),
-      marketSignal: homeSection("marketSignal", homeData.marketSignal),
+      hero: mergeObj(homeData.hero, hd?.hero),
+      marketSignal: mergeObj(homeData.marketSignal, hd?.marketSignal),
       capabilities: {
-        ...homeSection("capabilities", homeData.capabilities),
+        ...mergeObj(homeData.capabilities, hd?.capabilities),
         cards: homeCapCards,
       },
       portfolio: {
-        ...homeSection("portfolio", homeData.portfolio),
+        ...mergeObj(homeData.portfolio, hd?.portfolio),
         items: portfolioItems,
       },
-      marketThesis: homeSection("marketThesis", homeData.marketThesis),
+      marketThesis: mergeObj(homeData.marketThesis, hd?.marketThesis),
       technology: {
-        ...homeSection("technology", homeData.technology),
+        ...mergeObj(homeData.technology, hd?.technology),
         cards: technologyCards,
       },
-      groupStory: homeSection("groupStory", homeData.groupStory),
-      closingCta: homeSection("closingCta", homeData.closingCta),
+      groupStory: mergeObj(homeData.groupStory, hd?.groupStory),
+      closingCta: mergeObj(homeData.closingCta, hd?.closingCta),
     };
+
+    // ── venueItems ────────────────────────────────────────────────────────────
+    const mergedVenueItems = properties?.length
+      ? properties.map((p, i) => {
+          const fb = venueItems[i] ?? venueItems[0];
+          const img = sanityImageUrl(arr<unknown>(p.gallery)?.[0]) ?? fb.image;
+          return {
+            slug:
+              (p.slug as { current?: string } | undefined)?.current ?? fb.slug,
+            title: str(p.name) ?? fb.title,
+            category: str(p.category) ?? fb.category,
+            description: str(p.description) ?? fb.description,
+            location: str(p.location) ?? fb.location,
+            image: img,
+          };
+        })
+      : venueItems;
+
+    // ── venuesPage — from its own document ────────────────────────────────────
+    const vd = venuesDoc ?? {};
+    const sanityFilterOptions = arr<Record<string, unknown>>(vd.filterOptions);
+    const mergedVenuesPage = {
+      eyebrow: str(vd.eyebrow) ?? venuesPage.eyebrow,
+      titleLead: str(vd.titleLead) ?? venuesPage.titleLead,
+      titleAccent: str(vd.titleAccent) ?? venuesPage.titleAccent,
+      filterLabel: str(vd.filterLabel) ?? venuesPage.filterLabel,
+      allFilterLabel: str(vd.allFilterLabel) ?? venuesPage.allFilterLabel,
+      exploreLabel: str(vd.exploreLabel) ?? venuesPage.exploreLabel,
+      primaryActionLabel:
+        str(vd.primaryActionLabel) ?? venuesPage.primaryActionLabel,
+      secondaryActionLabel:
+        str(vd.secondaryActionLabel) ?? venuesPage.secondaryActionLabel,
+      filterOptions: sanityFilterOptions
+        ? sanityFilterOptions
+            .map((f) => ({
+              label: str(f.label) ?? "",
+              categories: arr<string>(f.categories) ?? [],
+            }))
+            .filter((f) => f.label !== "")
+        : venuesPage.filterOptions,
+    };
+
+    // ── capabilitiesPage — from its own document ──────────────────────────────
+    const cd = capabilitiesDoc ?? {};
+    const mergedCapabilitiesPage = mergeObj(capabilitiesPage, cd);
+    const sanityValueSteps = arr<Record<string, unknown>>(cd.valueSteps);
+    const mergedValueSteps = sanityValueSteps
+      ? sanityValueSteps.map((vs, i) => {
+          const fb = valueSteps[i] ?? valueSteps[0];
+          return {
+            step: str(vs.step) ?? fb.step,
+            title: str(vs.title) ?? fb.title,
+            description: str(vs.description) ?? fb.description,
+          };
+        })
+      : valueSteps;
+
+    // ── capabilityCards ───────────────────────────────────────────────────────
+    const mergedCapabilityCards = services?.length
+      ? services.map((sv, i) => {
+          const fb = capabilityCards[i] ?? capabilityCards[0];
+          return {
+            title: str(sv.title) ?? fb.title,
+            description: str(sv.description) ?? fb.description,
+          };
+        })
+      : capabilityCards;
+
+    // ── growthPage — from its own document ───────────────────────────────────
+    const gd = growthDoc ?? {};
+    const mergedGrowthPage = mergeObj(growthPage, gd);
+    const mergedGrowthPlay = arr<string>(gd.playItems) ?? growthPlayItems;
+    const mergedGrowthWhy = arr<string>(gd.whyItems) ?? growthWhyNowItems;
+
+    // ── aboutPage — from its own document ────────────────────────────────────
+    const ad = aboutDoc ?? {};
+    const mergedAboutPage = mergeObj(aboutPage, ad);
+    const mergedBeliefItems = arr<string>(ad.beliefItems) ?? beliefItems;
+    const sanityLeadership = arr<Record<string, unknown>>(ad.leadershipCards);
+    const mergedLeadership = sanityLeadership
+      ? sanityLeadership.map((lc, i) => {
+          const fb = leadershipCards[i] ?? leadershipCards[0];
+          return {
+            role: str(lc.role) ?? fb.role,
+            name: str(lc.name) ?? fb.name,
+            bio: str(lc.bio) ?? fb.bio,
+          };
+        })
+      : leadershipCards;
 
     return {
       siteBrand: mergedBrand,
@@ -343,17 +420,17 @@ export const getSiteContent = cache(async (): Promise<SiteContent> => {
       siteHeaderExtras: mergedHeaderExtras,
       siteFooter: mergedFooter,
       homeData: mergedHomeData,
-      venuesPage,
+      venuesPage: mergedVenuesPage,
       venueItems: mergedVenueItems,
-      capabilitiesPage,
+      capabilitiesPage: mergedCapabilitiesPage,
       capabilityCards: mergedCapabilityCards,
-      valueSteps,
-      growthPage,
-      growthPlayItems,
-      growthWhyNowItems,
-      aboutPage,
-      beliefItems,
-      leadershipCards,
+      valueSteps: mergedValueSteps,
+      growthPage: mergedGrowthPage,
+      growthPlayItems: mergedGrowthPlay,
+      growthWhyNowItems: mergedGrowthWhy,
+      aboutPage: mergedAboutPage,
+      beliefItems: mergedBeliefItems,
+      leadershipCards: mergedLeadership,
     };
   } catch (err) {
     console.error("❌ Sanity fetch error:", err);
