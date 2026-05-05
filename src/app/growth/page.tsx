@@ -1,40 +1,15 @@
-import { Header } from "@/components/organisms/Header";
-import { SiteFooter } from "@/components/organisms/SiteFooter";
 import { ArrowRightIcon } from "@/components/atoms/Icons";
 import { getSiteContent } from "@/lib/site-content";
 
 export default async function GrowthPage() {
   const {
-    siteBrand,
-    siteNavigation,
-    siteVenueLinks,
-    siteGroupLinks,
-    siteHeaderExtras,
-    siteFooter,
     growthPage,
     growthPlayItems,
     growthWhyNowItems,
   } = await getSiteContent();
 
   return (
-    <div className="flex min-h-screen flex-col bg-warm-ivory text-deep-night">
-      <Header
-        brand={siteBrand}
-        navigation={siteNavigation}
-        menuCta={siteHeaderExtras.menuCta}
-        venueLinks={siteVenueLinks}
-        groupTitle={siteHeaderExtras.groupTitle}
-        groupLinks={siteGroupLinks}
-        overlayMainDirLabel={siteHeaderExtras.overlayMainDirLabel}
-        overlayVenuesLabel={siteHeaderExtras.overlayVenuesLabel}
-        overlayCrmHeading={siteHeaderExtras.overlayCrmHeading}
-        overlayCrmAction={siteHeaderExtras.overlayCrmAction}
-        contact={siteHeaderExtras.contact}
-        footerLinks={siteHeaderExtras.footerLinks}
-        copyright={siteHeaderExtras.copyright}
-      />
-
-      <main className="grow bg-warm-ivory min-h-screen">
+      <main className="flex-1 min-h-screen bg-warm-ivory text-deep-night">
         {/* ── Hero ───────────────────────────────────────────────────── */}
         <section className="pt-40 pb-24 max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end">
@@ -150,14 +125,5 @@ export default async function GrowthPage() {
           </a>
         </section>
       </main>
-
-      <SiteFooter
-        brand={siteBrand}
-        navigation={siteNavigation}
-        venueLinks={siteVenueLinks}
-        groupLinks={siteGroupLinks}
-        footer={siteFooter}
-      />
-    </div>
   );
 }

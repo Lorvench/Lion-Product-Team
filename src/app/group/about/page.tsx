@@ -1,39 +1,14 @@
-import { Header } from "@/components/organisms/Header";
-import { SiteFooter } from "@/components/organisms/SiteFooter";
 import { getSiteContent } from "@/lib/site-content";
 
 export default async function AboutPage() {
   const {
-    siteBrand,
-    siteNavigation,
-    siteVenueLinks,
-    siteGroupLinks,
-    siteHeaderExtras,
-    siteFooter,
     aboutPage,
     beliefItems,
     leadershipCards,
   } = await getSiteContent();
 
   return (
-    <div className="flex min-h-screen flex-col bg-warm-ivory text-deep-night">
-      <Header
-        brand={siteBrand}
-        navigation={siteNavigation}
-        menuCta={siteHeaderExtras.menuCta}
-        venueLinks={siteVenueLinks}
-        groupTitle={siteHeaderExtras.groupTitle}
-        groupLinks={siteGroupLinks}
-        overlayMainDirLabel={siteHeaderExtras.overlayMainDirLabel}
-        overlayVenuesLabel={siteHeaderExtras.overlayVenuesLabel}
-        overlayCrmHeading={siteHeaderExtras.overlayCrmHeading}
-        overlayCrmAction={siteHeaderExtras.overlayCrmAction}
-        contact={siteHeaderExtras.contact}
-        footerLinks={siteHeaderExtras.footerLinks}
-        copyright={siteHeaderExtras.copyright}
-      />
-
-      <main className="grow bg-warm-ivory min-h-screen pt-40">
+      <main className="flex-1 min-h-screen bg-warm-ivory pt-40 text-deep-night">
         <div className="max-w-7xl mx-auto px-6">
           {/* Hero intro */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end mb-20">
@@ -121,14 +96,5 @@ export default async function AboutPage() {
           </section>
         </div>
       </main>
-
-      <SiteFooter
-        brand={siteBrand}
-        navigation={siteNavigation}
-        venueLinks={siteVenueLinks}
-        groupLinks={siteGroupLinks}
-        footer={siteFooter}
-      />
-    </div>
   );
 }

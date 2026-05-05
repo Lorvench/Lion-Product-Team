@@ -2,8 +2,6 @@
 
 import Image from "next/image";
 import { useMemo, useState } from "react";
-import { Header } from "@/components/organisms/Header";
-import { SiteFooter } from "@/components/organisms/SiteFooter";
 import { MapPinIcon } from "@/components/atoms/Icons";
 import type { SiteContent } from "@/lib/site-content";
 
@@ -13,12 +11,6 @@ type VenuesPageClientProps = {
 
 export function VenuesPageClient({ siteContent }: VenuesPageClientProps) {
   const {
-    siteBrand,
-    siteNavigation,
-    siteVenueLinks,
-    siteGroupLinks,
-    siteHeaderExtras,
-    siteFooter,
     venuesPage,
     venueItems,
   } = siteContent;
@@ -98,24 +90,7 @@ export function VenuesPageClient({ siteContent }: VenuesPageClientProps) {
           });
 
   return (
-    <div className="flex min-h-screen flex-col bg-warm-ivory text-deep-night">
-      <Header
-        brand={siteBrand}
-        navigation={siteNavigation}
-        menuCta={siteHeaderExtras.menuCta}
-        venueLinks={siteVenueLinks}
-        groupTitle={siteHeaderExtras.groupTitle}
-        groupLinks={siteGroupLinks}
-        overlayMainDirLabel={siteHeaderExtras.overlayMainDirLabel}
-        overlayVenuesLabel={siteHeaderExtras.overlayVenuesLabel}
-        overlayCrmHeading={siteHeaderExtras.overlayCrmHeading}
-        overlayCrmAction={siteHeaderExtras.overlayCrmAction}
-        contact={siteHeaderExtras.contact}
-        footerLinks={siteHeaderExtras.footerLinks}
-        copyright={siteHeaderExtras.copyright}
-      />
-
-      <main className="grow bg-warm-ivory min-h-screen pt-40">
+      <main className="flex-1 min-h-screen bg-warm-ivory pt-40 text-deep-night">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-16">
             <span className="text-[10px] font-black tracking-[0.3em] uppercase mb-8 block text-lion-gold">
@@ -202,14 +177,5 @@ export function VenuesPageClient({ siteContent }: VenuesPageClientProps) {
           </div>
         </div>
       </main>
-
-      <SiteFooter
-        brand={siteBrand}
-        navigation={siteNavigation}
-        venueLinks={siteVenueLinks}
-        groupLinks={siteGroupLinks}
-        footer={siteFooter}
-      />
-    </div>
   );
 }

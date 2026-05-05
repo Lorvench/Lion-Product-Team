@@ -89,8 +89,8 @@ const portfolioItems = [
     category: placeholder(2),
     title: placeholder(2),
     description: placeholder(14),
-    primaryAction: placeholder(2),
-    secondaryAction: placeholder(2),
+    primaryAction: "View Venue",
+    secondaryAction: "Enquire Now",
     badgeClassName: "bg-lion-gold text-white",
   },
   {

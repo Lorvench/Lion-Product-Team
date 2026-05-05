@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
+import { Header } from "@/components/organisms/Header";
+import { SiteFooter } from "@/components/organisms/SiteFooter";
+import { getSiteContent } from "@/lib/site-content";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -17,9 +19,8 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "Lion Group Placeholder Home",
-  description:
-    "Pixel-accurate Next.js placeholder clone of the uploaded Lion Group home design.",
+  title: "Lion Group",
+  description: "Elevating Lagos hospitality.",
 };
 
 export const viewport: Viewport = {
@@ -29,80 +30,60 @@ export const viewport: Viewport = {
   themeColor: "#fff4d6",
 };
 
-const stripInjectedAttrsScript = `
-(() => {
-  const attrs = ["bis_skin_checked"];
-
-  const cleanElement = (element) => {
-    attrs.forEach((attr) => element?.removeAttribute?.(attr));
-  };
-
-  const cleanTree = (root) => {
-    cleanElement(root);
-    attrs.forEach((attr) => {
-      root?.querySelectorAll?.(\`[\${attr}]\`)?.forEach(cleanElement);
-    });
-  };
-
-  const start = () => {
-    cleanTree(document.documentElement);
-
-    const observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        if (mutation.type === "attributes") {
-          cleanElement(mutation.target);
-        }
-
-        mutation.addedNodes.forEach((node) => {
-          if (node.nodeType === Node.ELEMENT_NODE) {
-            cleanTree(node);
-          }
-        });
-      }
-    });
-
-    observer.observe(document.documentElement, {
-      subtree: true,
-      childList: true,
-      attributes: true,
-      attributeFilter: attrs,
-    });
-
-    window.addEventListener(
-      "load",
-      () => {
-        cleanTree(document.documentElement);
-        window.setTimeout(() => observer.disconnect(), 5000);
-      },
-      { once: true },
-    );
-  };
-
-  if (document.documentElement) {
-    start();
-  } else {
-    document.addEventListener("DOMContentLoaded", start, { once: true });
-  }
-})();
-`;
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const siteContent = await getSiteContent();
+
+  const brand = {
+    leftLabel: siteContent.siteBrand?.leftLabel ?? "",
+    rightLabel: siteContent.siteBrand?.rightLabel ?? "",
+  };
+  const navigation = siteContent.siteNavigation ?? [];
+  const venueLinks = siteContent.siteVenueLinks ?? [];
+  const groupLinks = siteContent.siteGroupLinks ?? [];
+  const headerExtras = siteContent.siteHeaderExtras;
+  const footer = siteContent.siteFooter;
+
   return (
     <html
       lang="en"
       suppressHydrationWarning
       className={`${dmSans.variable} ${cormorant.variable} h-full antialiased`}>
       <body suppressHydrationWarning className="min-h-full flex flex-col">
-        <Script
-          id="strip-injected-hydration-attrs"
-          strategy="beforeInteractive">
-          {stripInjectedAttrsScript}
-        </Script>
+        <Header
+          brand={brand}
+          navigation={navigation}
+          menuCta={headerExtras?.menuCta ?? ""}
+          venueLinks={venueLinks}
+          groupTitle={headerExtras?.groupTitle ?? ""}
+          groupLinks={groupLinks}
+          overlayMainDirLabel={headerExtras?.overlayMainDirLabel ?? ""}
+          overlayVenuesLabel={headerExtras?.overlayVenuesLabel ?? ""}
+          overlayCrmHeading={headerExtras?.overlayCrmHeading ?? ""}
+          overlayCrmAction={headerExtras?.overlayCrmAction ?? ""}
+          contact={
+            headerExtras?.contact ?? {
+              eyebrow: "",
+              primary: "",
+              secondary: "",
+            }
+          }
+          footerLinks={headerExtras?.footerLinks ?? []}
+          copyright={headerExtras?.copyright ?? footer?.copyright ?? ""}
+        />
+
         {children}
+
+        <SiteFooter
+          brand={brand}
+          navigation={navigation}
+          venueLinks={venueLinks}
+          groupLinks={groupLinks}
+          footer={footer}
+        />
       </body>
     </html>
   );

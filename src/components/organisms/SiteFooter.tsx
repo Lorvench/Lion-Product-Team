@@ -60,9 +60,29 @@ export function SiteFooter({
   groupLinks,
   footer,
 }: SiteFooterProps) {
+  const safeBrand = {
+    leftLabel: brand?.leftLabel ?? "",
+    rightLabel: brand?.rightLabel ?? "",
+  };
+  const safeNavigation = navigation ?? [];
+  const safeVenueLinks = venueLinks ?? [];
+  const safeGroupLinks = groupLinks ?? [];
+  const safeFooter = {
+    tagline: footer?.tagline ?? "",
+    crmLabel: footer?.crmLabel ?? "",
+    crmHeading: footer?.crmHeading ?? "",
+    crmEmailPlaceholder: footer?.crmEmailPlaceholder ?? "",
+    directoriesTitle: footer?.directoriesTitle ?? "",
+    portfolioTitle: footer?.portfolioTitle ?? "",
+    socialLinks: footer?.socialLinks ?? [],
+    bottomLinks: footer?.bottomLinks ?? [],
+    copyright: footer?.copyright ?? "",
+  };
+
   return (
     <footer
       id="footer"
+      suppressHydrationWarning
       className="scroll-mt-24 border-t border-white/5 bg-deep-night pb-12 pt-20 text-warm-ivory md:scroll-mt-28 md:pt-24 xl:pt-32">
       <Container>
         {/* Main grid */}
@@ -70,20 +90,20 @@ export function SiteFooter({
           {/* Col 1: Brand + tagline + socials + CRM */}
           <div className="md:col-span-2 lg:col-span-5">
             <Logo
-              leftLabel={brand.leftLabel}
-              rightLabel={brand.rightLabel}
+              leftLabel={safeBrand.leftLabel}
+              rightLabel={safeBrand.rightLabel}
               inverted
               href="/"
               className="mb-8 md:mb-10"
             />
             <p className="mb-10 font-display text-3xl leading-tight tracking-tighter sm:text-4xl md:text-5xl md:leading-[1.1] max-w-sm">
-              {footer.tagline}
+              {safeFooter.tagline}
             </p>
 
             {/* Social icons */}
             <div className="mb-12 flex gap-5 md:gap-6 md:mb-14">
-              {footer.socialLinks.map((linkItem, index) => {
-                const platform = linkItem.platform.toLowerCase();
+              {safeFooter.socialLinks.map((linkItem, index) => {
+                const platform = linkItem.platform?.toLowerCase?.() ?? "";
                 const Icon =
                   socialIconMap[platform as keyof typeof socialIconMap];
 
@@ -108,13 +128,13 @@ export function SiteFooter({
             {/* LION CRM card */}
             <div className="max-w-sm rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-8">
               <span className="mb-5 block text-[10px] font-black uppercase tracking-[0.3em] text-lion-gold">
-                {footer.crmLabel}
+                {safeFooter.crmLabel}
               </span>
-              <h4 className="mb-5 font-display text-xl">{footer.crmHeading}</h4>
+              <h4 className="mb-5 font-display text-xl">{safeFooter.crmHeading}</h4>
               <div className="flex gap-2">
                 <input
                   type="email"
-                  placeholder={footer.crmEmailPlaceholder}
+                  placeholder={safeFooter.crmEmailPlaceholder}
                   className="grow rounded-xl border border-white/10 bg-deep-night px-4 py-3 text-xs text-warm-ivory placeholder:text-warm-ivory/40 focus:border-lion-gold/50 focus:outline-none"
                 />
                 <button
@@ -130,10 +150,10 @@ export function SiteFooter({
           {/* Col 2: Directories */}
           <div className="md:col-span-1 lg:col-span-3">
             <h4 className="mb-8 block text-[10px] font-black uppercase tracking-[0.3em] text-lion-gold opacity-40 md:mb-10 xl:mb-12">
-              {footer.directoriesTitle}
+              {safeFooter.directoriesTitle}
             </h4>
             <ul className="space-y-5 md:space-y-6">
-              {navigation.map((item, index) => (
+              {safeNavigation.map((item, index) => (
                 <li key={`footer-dir-${index}`}>
                   <Link
                     href={item.href}
@@ -142,7 +162,7 @@ export function SiteFooter({
                   </Link>
                 </li>
               ))}
-              {groupLinks.map((item, index) => (
+              {safeGroupLinks.map((item, index) => (
                 <li key={`footer-sub-${index}`}>
                   <Link
                     href={item.href}
@@ -157,10 +177,10 @@ export function SiteFooter({
           {/* Col 3: The Portfolio */}
           <div className="md:col-span-1 lg:col-span-4">
             <h4 className="mb-8 block text-[10px] font-black uppercase tracking-[0.3em] text-lion-gold opacity-40 md:mb-10 xl:mb-12">
-              {footer.portfolioTitle}
+              {safeFooter.portfolioTitle}
             </h4>
             <div className="space-y-0">
-              {venueLinks.map((item, index) => (
+              {safeVenueLinks.map((item, index) => (
                 <Link
                   key={`footer-venue-${index}`}
                   href={item.href}
@@ -180,10 +200,10 @@ export function SiteFooter({
         {/* Footer bottom */}
         <div className="flex flex-col items-start justify-between gap-4 border-t border-white/5 pt-8 sm:flex-row sm:items-center md:pt-10">
           <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">
-            {footer.copyright}
+            {safeFooter.copyright}
           </p>
           <div className="flex flex-wrap gap-x-6 gap-y-2">
-            {footer.bottomLinks.map((linkItem, index) => (
+            {safeFooter.bottomLinks.map((linkItem, index) => (
               <Link
                 key={`footer-bottom-${index}`}
                 href={linkItem.href}

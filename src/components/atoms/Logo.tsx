@@ -3,53 +3,78 @@
 import Link from "next/link";
 
 type LogoProps = {
-  leftLabel: string;
-  rightLabel: string;
   href?: string;
   inverted?: boolean;
   onClick?: () => void;
   className?: string;
+  leftLabel?: string;
+  rightLabel?: string;
 };
 
-const classNames = (...values: Array<string | undefined | false>) =>
-  values.filter(Boolean).join(" ");
+const cn = (...v: Array<string | undefined | false>) =>
+  v.filter(Boolean).join(" ");
+
+function OFace({ inverted }: { inverted: boolean }) {
+  return (
+    <span className="relative inline-flex items-center justify-center w-[1.05em] h-[1.05em] mx-[0.05em]">
+      <span className="absolute inset-0 rounded-full bg-lion-gold" />
+      <span
+        className="absolute inset-[12%] rounded-full"
+        style={{ backgroundColor: inverted ? "#FFF4D6" : "#0A1A2E" }}
+      />
+      <span
+        className="absolute inset-[25%] rounded-full"
+        style={{ backgroundColor: inverted ? "#0A1A2E" : "#FFF4D6" }}
+      />
+      <span
+        className="absolute top-[36%] left-[30%] w-[11%] h-[11%] rounded-full"
+        style={{ backgroundColor: inverted ? "#FFF4D6" : "#0A1A2E" }}
+      />
+      <span
+        className="absolute top-[36%] right-[30%] w-[11%] h-[11%] rounded-full"
+        style={{ backgroundColor: inverted ? "#FFF4D6" : "#0A1A2E" }}
+      />
+    </span>
+  );
+}
 
 export function Logo({
-  leftLabel,
-  rightLabel,
   href = "/",
   inverted = false,
   onClick,
   className,
 }: LogoProps) {
+  const textColor = inverted ? "text-warm-ivory" : "text-deep-night";
+  const groupColor = inverted ? "text-warm-ivory/50" : "text-deep-night/50";
+
   return (
     <Link
       href={href}
       onClick={() => onClick?.()}
-      className={classNames(
-        "relative z-60 inline-flex min-w-0 max-w-full overflow-hidden",
+      aria-label="Lion Group — home"
+      className={cn(
+        "relative z-60 inline-flex items-center select-none min-w-0 max-w-full",
         className,
       )}>
-      <div
-        className={classNames(
-          "min-w-0 flex items-center gap-0.5 select-none pointer-events-none sm:gap-1",
-          inverted ? "text-warm-ivory" : "text-deep-night",
+      <span
+        className={cn(
+          "flex items-center font-black leading-none tracking-tight",
+          "text-lg sm:text-xl md:text-2xl",
+          textColor,
         )}>
-        <div className="flex min-w-0 items-center font-black leading-none tracking-[0.08em] text-[8px] sm:text-[10px] md:text-sm lg:text-base">
-          <span className="max-w-[4.25rem] truncate sm:max-w-none">
-            {leftLabel}
-          </span>
-          <div className="mx-1 shrink-0 sm:mx-1.5">
-            <div className="relative flex h-6 w-6 items-center justify-center rounded-full border border-current sm:h-8 sm:w-8">
-              <div className="h-3 w-3 rounded-full border border-current bg-current/10 sm:h-4 sm:w-4" />
-              <div className="absolute right-[38%] top-[38%] h-1 w-1 rounded-full bg-current sm:h-1.5 sm:w-1.5" />
-            </div>
-          </div>
-          <span className="max-w-[6rem] truncate sm:max-w-none">
-            {rightLabel}
-          </span>
-        </div>
-      </div>
+        <span>LI</span>
+        <OFace inverted={inverted} />
+        <span>N</span>
+      </span>
+
+      <span
+        className={cn(
+          "ml-2 font-black uppercase tracking-[0.22em] leading-none",
+          "text-[0.5rem] sm:text-[0.55rem] md:text-[0.6rem]",
+          groupColor,
+        )}>
+        Group
+      </span>
     </Link>
   );
 }
