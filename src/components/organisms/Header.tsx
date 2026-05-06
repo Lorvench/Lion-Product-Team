@@ -42,7 +42,6 @@ type HeaderProps = {
     href: string;
   }>;
   copyright: string;
-  /** Pass true only on pages whose hero has a dark background (home). */
   darkHero?: boolean;
 };
 
@@ -71,55 +70,44 @@ export function Header({
 
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
-
     document.body.style.overflow = isOpen ? "hidden" : originalOverflow;
-
     return () => {
       document.body.style.overflow = originalOverflow;
     };
   }, [isOpen]);
 
   useEffect(() => {
-    const syncScrollState = () => {
-      setIsAtTop(window.scrollY <= 8);
-    };
-
+    const syncScrollState = () => setIsAtTop(window.scrollY <= 8);
     syncScrollState();
     window.addEventListener("scroll", syncScrollState, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", syncScrollState);
-    };
+    return () => window.removeEventListener("scroll", syncScrollState);
   }, []);
 
   useEffect(() => {
-    if (!isOpen) {
-      return undefined;
-    }
+    setIsOpen(false);
+    setIsAtTop(window.scrollY <= 8);
+  }, [pathname]);
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsOpen(false);
-      }
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsOpen(false);
     };
-
     window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen]);
 
-  const toggleMenu = () => setIsOpen((current) => !current);
+  const toggleMenu = () => setIsOpen((c) => !c);
   const closeMenu = () => setIsOpen(false);
-  // Header bar chrome: transparent at top on dark-hero pages (inverted/white text),
-  // otherwise always uses dark text regardless of scroll position.
-  const usesDarkHeroChrome = darkHero || pathname === "/venues";
+
+  const usesDarkHeroChrome = darkHero || pathname === "/";
   const usesLightChrome = usesDarkHeroChrome && !isOpen && isAtTop;
 
   return (
     <>
+      {/* ── Header bar ─────────────────────────────────────────────────────── */}
       <header
+        suppressHydrationWarning
         className={classNames(
           "fixed left-0 right-0 top-0 z-50 border-b py-3.5 transition-[background-color,border-color,backdrop-filter] duration-500 md:py-4",
           isOpen
@@ -183,9 +171,10 @@ export function Header({
         </Container>
       </header>
 
-      {/* Overlay — warm ivory background, 3-column layout */}
+      {/* ── Full-screen overlay ─────────────────────────────────────────────── */}
       <div
         id="site-navigation-overlay"
+        suppressHydrationWarning
         aria-hidden={!isOpen}
         className={classNames(
           "fixed inset-0 z-40 bg-warm-ivory text-deep-night transition-all duration-500",
@@ -193,32 +182,38 @@ export function Header({
             ? "visible pointer-events-auto opacity-100"
             : "invisible pointer-events-none opacity-0",
         )}>
-        <Container className="flex min-h-full flex-col pb-10 pt-28 sm:pb-12 sm:pt-32">
-          <div className="grid flex-1 gap-10 lg:grid-cols-3 lg:gap-12 xl:gap-16">
-            {/* Col 1: Main Directory */}
-            <div className="space-y-2">
-              <span className="mb-8 block text-[10px] font-black uppercase tracking-[0.3em] text-lion-gold opacity-60 md:mb-10">
+        {/*
+          overflow-y-auto  → scrollable on small screens
+          pt-20            → clears the fixed header bar
+          pb-6             → breathing room at the bottom
+        */}
+        <Container className="flex min-h-full flex-col overflow-y-auto pb-6 pt-20 sm:pb-8 sm:pt-24">
+          {/* 3-column grid */}
+          <div className="grid flex-1 gap-6 lg:grid-cols-3 lg:gap-8 xl:gap-10">
+            {/* Col 1 — Main directories */}
+            <div className="space-y-1">
+              <span className="mb-6 block text-[10px] font-black uppercase tracking-[0.3em] text-lion-gold opacity-60">
                 {overlayMainDirLabel}
               </span>
-              <nav className="space-y-2">
+              <nav className="space-y-1">
                 {navigation.map((item) => (
                   <a
                     key={`overlay-${item.href}-${item.label}`}
                     href={item.href}
                     onClick={closeMenu}
-                    className="block py-2 font-display text-3xl leading-none tracking-tighter transition-colors hover:text-lion-gold sm:text-5xl">
+                    className="block py-1 font-display text-2xl leading-tight tracking-tighter transition-colors hover:text-lion-gold sm:text-3xl lg:text-4xl">
                     {item.label}
                   </a>
                 ))}
               </nav>
             </div>
 
-            {/* Col 2: Venues Portfolio */}
+            {/* Col 2 — Venues */}
             <div>
-              <span className="mb-8 block text-[10px] font-black uppercase tracking-[0.3em] text-lion-gold opacity-60 md:mb-10">
+              <span className="mb-6 block text-[10px] font-black uppercase tracking-[0.3em] text-lion-gold opacity-60">
                 {overlayVenuesLabel}
               </span>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
                 {venueLinks.map((item, index) => (
                   <OverlayVenueLink
                     key={`venue-${index}`}
@@ -230,12 +225,14 @@ export function Header({
               </div>
             </div>
 
-            {/* Col 3: The Group */}
-            <div>
-              <span className="mb-8 block text-[10px] font-black uppercase tracking-[0.3em] text-lion-gold opacity-60 md:mb-10">
+            {/* Col 3 — The Group */}
+            <div className="flex flex-col gap-4">
+              <span className="block text-[10px] font-black uppercase tracking-[0.3em] text-lion-gold opacity-60">
                 {groupTitle}
               </span>
-              <ul className="mb-8 space-y-4">
+
+              {/* Group links */}
+              <ul className="space-y-3">
                 {groupLinks.map((item, index) => (
                   <li key={`group-link-${index}`}>
                     <a
@@ -248,21 +245,22 @@ export function Header({
                 ))}
               </ul>
 
-              <div className="mb-8 rounded-3xl border border-deep-night/10 bg-white/40 p-6">
-                <span className="mb-3 block text-[10px] font-black uppercase tracking-[0.3em] text-lion-gold opacity-60">
+              {/* Contact card */}
+              <div className="rounded-3xl border border-deep-night/10 bg-white/40 p-5">
+                <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.3em] text-lion-gold opacity-60">
                   {contact.eyebrow}
                 </span>
-                <p className="font-display text-xl text-deep-night">
+                <p className="font-display text-lg text-deep-night">
                   {contact.primary}
                 </p>
-                <p className="mt-3 text-[10px] font-black uppercase tracking-widest text-deep-night/40">
+                <p className="mt-2 text-[10px] font-black uppercase tracking-widest text-deep-night/40">
                   {contact.secondary}
                 </p>
               </div>
 
               {/* CRM card */}
-              <div className="mt-auto rounded-3xl bg-deep-night p-6 text-warm-ivory sm:p-8">
-                <h4 className="mb-5 font-display text-xl">
+              <div className="rounded-3xl bg-deep-night p-5 text-warm-ivory">
+                <h4 className="mb-4 font-display text-lg">
                   {overlayCrmHeading}
                 </h4>
                 <button
@@ -277,11 +275,11 @@ export function Header({
           </div>
 
           {/* Bottom strip */}
-          <div className="mt-10 flex flex-col items-start justify-between gap-5 border-t border-deep-night/10 pt-8 md:flex-row md:items-center md:mt-12 md:pt-10">
+          <div className="mt-6 flex flex-col items-start justify-between gap-3 border-t border-deep-night/10 pt-5 md:flex-row md:items-center">
             <div className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">
               {copyright}
             </div>
-            <div className="flex flex-wrap gap-x-6 gap-y-3 md:justify-end">
+            <div className="flex flex-wrap gap-x-6 gap-y-2 md:justify-end">
               {footerLinks.map((linkItem, index) => (
                 <a
                   key={`footer-link-${index}`}
